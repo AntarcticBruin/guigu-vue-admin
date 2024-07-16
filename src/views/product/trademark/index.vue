@@ -3,7 +3,9 @@
 </script>
 
 <template>
-  <H1>首页</H1>
+  <div>
+    <H1>品牌管理</H1>
+  </div>
 </template>
 
 <style scoped lang="scss">
