@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import setting from "@/setting.ts";
 </script>
-
+<script lang="ts">
+export default {
+  name: 'Logo'
+}
+</script>
 <template>
   <div class="logo" v-if="setting.logoHidden">
     <img :src="setting.logo" alt="">
@@ -17,7 +21,7 @@ import setting from "@/setting.ts";
   align-items: center;
   width: 100%;
   height: $base-menu-logo-height;
-  padding: 20px;
+  padding: 10px;
   img{
     width: 40px;
     height: 40px;
@@ -26,6 +30,7 @@ import setting from "@/setting.ts";
     font-size: 20px;
     margin-left: 10px;
     color: white;
+    white-space: nowrap;
   }
 }
 </style>
