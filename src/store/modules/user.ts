@@ -1,6 +1,6 @@
 //创建用户相关的仓库
 import {defineStore} from "pinia";
-import type {loginForm, loginResponseData} from "../../api/user/type.ts";
+import type {loginFormData, loginResponseData, userInfoResponseData} from "../../api/user/type.ts";
 import {reqLogin, reqLogout, reqUserinfo} from "../../api/user";
 import type {UserState} from './types/type.ts'
 import {GET_TOKEN, SET_TOKEN, REMOVE_TOKEN} from "../../utils/token.ts";
@@ -17,8 +17,8 @@ const useUserStore = defineStore("user", {
         return userState;
     },
     actions: {
-        async userLogin(data: any) {
-            let result: any = await reqLogin(data);
+        async userLogin(data: loginFormData) {
+            let result: loginResponseData = await reqLogin(data);
             if (result.code === 200) {
                 this.token = (result.data as string);
                 SET_TOKEN((result.data as string))
@@ -28,12 +28,12 @@ const useUserStore = defineStore("user", {
             }
         },
         async userInfo() {
-            let result = await reqUserinfo();
+            let result: userInfoResponseData = await reqUserinfo();
             console.log(result);
             if (result.code === 200) {
                 //获取用户信息
                 this.avatar = result.data.avatar;
-                this.username = result.data.username;
+                this.username = result.data.name;
                 return 'ok'
             } else {
                 return Promise.reject(new Error(result.message));
@@ -41,7 +41,7 @@ const useUserStore = defineStore("user", {
 
         },
         async userLogout() {
-            let rs = await reqLogout();
+            let rs: any = await reqLogout();
             if (rs.code === 200) {
                 this.token = '';
                 this.username = '';
@@ -49,7 +49,7 @@ const useUserStore = defineStore("user", {
                 REMOVE_TOKEN()
                 return 'ok'
             } else {
-                return Promise.reject(new Error(result.message));
+                return Promise.reject(new Error(rs.message));
             }
 
         }

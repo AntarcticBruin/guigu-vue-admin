@@ -1,6 +1,8 @@
 //用户相关的接口
 import request from '@/utils/request.ts'
+import {loginFormData, loginResponseData, userInfoResponseData} from "./type.ts";
 
+//路径
 enum API {
     LOGIN_URL = '/admin/acl/index/login',
     USERINFO_URL = '/admin/acl/index/info',
@@ -8,8 +10,9 @@ enum API {
 
 }
 
-
-export const reqLogin = (data: any) => request.post<any, any>(API.LOGIN_URL, data);
-
-export const reqUserinfo = () => request.get<any, any>(API.USERINFO_URL);
+// 登录
+export const reqLogin = (data: loginFormData) => request.post<any, loginResponseData>(API.LOGIN_URL, data);
+// 获取用户信息
+export const reqUserinfo = () => request.get<any, userInfoResponseData>(API.USERINFO_URL);
+// 退出
 export const reqLogout = () => request.post<any, any>(API.LOGOUT_URL);
