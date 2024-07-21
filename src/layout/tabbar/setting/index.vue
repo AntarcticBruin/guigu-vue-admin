@@ -24,10 +24,10 @@ const updateRefresh = () => {
   layOutSettingStore.refresh = !layOutSettingStore.refresh
 }
 //退出登录
-const logout = () => {
+const logout = async () => {
 // 清空用户数据
   //跳转到登陆页面
-  userStore.userLogout();
+  await userStore.userLogout();
   $router.push('/login');
 }
 </script>

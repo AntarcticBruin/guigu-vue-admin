@@ -1,10 +1,13 @@
 //路由鉴权
 import router from "./router";
 import nprogress from 'nprogress'
+
+nprogress.configure({showSpinner: false})
 import 'nprogress/nprogress.css'
 import useUserStore from "./store/modules/user.ts";
 import pinia from "./store";
 import {ElMessage} from "element-plus";
+import setting from "./setting.ts";
 //需要传入大仓库
 let userStore = useUserStore(pinia);
 
@@ -29,7 +32,11 @@ router.beforeEach(async (to: any, from: any, next: nay) => {
                     await userStore.userInfo();
                     next();
                 } catch (err) {
+                    //token过期了，清除用户信息，返回登录页
                     ElMessage.error(err.message);
+                    await userStore.userLogout();
+                    next({path: '/login', query: {redirect: to.path}});
+
                 }
             }
         }
@@ -44,6 +51,7 @@ router.beforeEach(async (to: any, from: any, next: nay) => {
 })
 //全局前置守卫
 router.afterEach((to: any, from: any) => {
+    document.title = `${setting.title} - ${to.meta.title}`;
     nprogress.done()
 })
 //任意路由的切换实现进度条效果
