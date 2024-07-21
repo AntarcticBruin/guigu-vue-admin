@@ -95,7 +95,7 @@ export const constRoute = [
                 }
             },
             {
-                path: '/acl/permission',
+                path: '/acl/permission.ts',
                 component: () => import('@/views/acl/permission/index.vue'),
                 name: 'Permission',
                 meta: {
