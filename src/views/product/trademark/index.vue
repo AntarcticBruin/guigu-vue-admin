@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import {ref, onMounted} from "vue";
-import {reqHasTradeMark} from '@/api/product/trademark'
-import {Records, TradeMarkResponseData} from "@/api/product/trademark/type.ts";
+import {ref, onMounted, reactive} from "vue";
+import type {UploadProps} from 'element-plus'
+import {ElMessage} from 'element-plus'
+import {reqAddOrUpdateTrademark, reqHasTradeMark} from '@/api/product/trademark'
+import {Records, TradeMark, TradeMarkResponseData} from "@/api/product/trademark/type.ts";
 //当前页码
 let pageNo = ref<number>(1);
 //每页展示的条数
@@ -10,6 +12,11 @@ let limit = ref<number>(3);
 let total = ref<number>(0);
 //品牌列表
 let trademarkArr = ref<Records>([]);
+//搜集新增品牌数据
+let tradeMarkParams = reactive<TradeMark>({
+  tmName: '',
+  logoUrl: ''
+});
 //对话框
 let dialogFormVisible = ref(false);
 const getHasTradeMark = async () => {
@@ -26,21 +33,49 @@ onMounted(() => {
 const changePageNo = () => {
   getHasTradeMark();
 }
-
+//增加品牌数据
 const addTradeMark = () => {
+  tradeMarkParams.logoUrl = ''
+  tradeMarkParams.tmName = ''
   dialogFormVisible.value = true;
+
 }
+//修改品牌数据
 const updateTradeMark = () => {
   dialogFormVisible.value = true;
 }
 //对话框取消按钮
 const cancel = () => {
   dialogFormVisible.value = false;
+
 }
 
 //对话框确认按钮
-const confirm = () => {
-  dialogFormVisible.value = false;
+const confirm = async () => {
+
+  let res: any = await reqAddOrUpdateTrademark(tradeMarkParams)
+  if (res.code === 200) {
+    dialogFormVisible.value = false;
+    ElMessage.success('添加品牌成功');
+    await getHasTradeMark()
+  } else {
+    ElMessage.error('添加品牌失败')
+  }
+}
+//上传文件之前的钩子
+const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
+  if (rawFile.type !== 'image/jpeg') {
+    ElMessage.error('Avatar picture must be JPG format!')
+    return false
+  } else if (rawFile.size / 1024 / 1024 > 2) {
+    ElMessage.error('Avatar picture size can not exceed 2MB!')
+    return false
+  }
+  return true
+}
+
+const handleAvatarSuccess: UploadProps['onSuccess'] = (response) => {
+  tradeMarkParams.logoUrl = response.data
 }
 </script>
 <template>
@@ -84,17 +119,17 @@ const confirm = () => {
   <el-dialog v-model="dialogFormVisible" title="添加品牌" width="500">
     <el-form style="width: 80%">
       <el-form-item label="品牌名称" label-width="80px">
-        <el-input type="text" placeholder="请输入品牌名称"></el-input>
+        <el-input type="text" placeholder="请输入品牌名称" v-model="tradeMarkParams.tmName"></el-input>
       </el-form-item>
       <el-form-item label="品牌LOGO" label-width="80px">
         <el-upload
             class="avatar-uploader"
-            action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
+            action="/api/admin/product/fileUpload"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
             :before-upload="beforeAvatarUpload"
         >
-          <img v-if="imageUrl" :src="imageUrl" class="avatar"/>
+          <img v-if="tradeMarkParams.logoUrl" :src="tradeMarkParams.logoUrl" class="avatar"/>
           <el-icon v-else class="avatar-uploader-icon">
             <Plus/>
           </el-icon>
