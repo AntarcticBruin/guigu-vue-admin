@@ -17,7 +17,7 @@ export default {
   name: 'Main'
 }
 </script>
-<template>
+<template >
   <router-view v-slot="{ Component }">
     <transition name="fade">
       <component :is="Component" v-if="flag"></component>

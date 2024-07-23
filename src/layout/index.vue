@@ -75,6 +75,7 @@ export default {
     position: fixed;
     top: 0;
     left: $base-menu-width;
+    min-width: 674px;
     transition: all 0.3s;
     &.fold {
       width: calc(100vw - $base-menu-min-width);
@@ -85,6 +86,7 @@ export default {
     position: absolute;
     width: calc(100% - $base-menu-width);
     height: calc(100vh - $base-tabbar-height);
+    min-width: 674px;
     left: $base-menu-width;
     top: $base-tabbar-height;
     padding: 20px;
